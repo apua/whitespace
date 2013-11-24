@@ -27,7 +27,8 @@ def output_result(content, output_file=None):
     print(content)
 
 if __name__=='__main__':
-  C = get_content("http://compsoc.dur.ac.uk/whitespace/fibonacci.ws")
+  path = "http://compsoc.dur.ac.uk/whitespace/tutorial.html"
+  C = get_content(path)
   C = clean_content(C)
   C = translate_content(C,' \t\n', 'STL')
-  output_result(C)
+  output_result(C,'factorial')
