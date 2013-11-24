@@ -177,5 +177,6 @@ def run(code):
     #input()
 
 if __name__=='__main__':
-  code = open('factorial').read()
+  path = 'STL/fibnancy.stl'
+  code = open(path).read()
   run(code)
