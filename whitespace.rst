@@ -1,4 +1,5 @@
 ::
+
   S   S   STL             Put a 1 on the stack
   L   SS  STSSSSTTL       Set a Label at this point
   S   LS                  Duplicate the top stack item
@@ -16,28 +17,37 @@
   S   LL                  Discard our accumulator, to be tidy
   L   LL                  Finish
 
-=================
-
+======= == =====================
 S stack manipulation
+--------------------------------
     S   n   push
-    LS      copy 1th item
-  **TS  n   copy nth item**
+    LS      copy 1st item
+    TS  n   copy nth item
     LT      swap top 2 items
-    LL      drop 1th item
-    TL  n   
+    LL      drop 1st item
+    TL  n   drop 2nd~n+1th items
+======= == =====================
 
+======= == =====================
 TS arithmetic
+--------------------------------
     SS      +
     ST      -
     SL      *
     TS      /
     TT      %
+======= == =====================
 
+======= == =====================
 TT heap
+--------------------------------
     S       store
     T       retrieve
+======= == =====================
 
+======= == =====================
 L flow
+--------------------------------
     SS  l   mark
     ST  l   call subroutine
     SL  l   jump
@@ -45,9 +55,15 @@ L flow
     TT  l   jump if negative
     TL      end subroutine
     LL      end program
+======= == =====================
 
+======= == =====================
 TL IO
+--------------------------------
     SS      %c
     ST      %d
     TS      &c
     TT      &d
+======= == =====================
+
+
