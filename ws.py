@@ -1,12 +1,13 @@
 def run(code):
 
-  patt = r'''(?: S (?:
-      S ([ST]+)L|
+  patt = r'''(?:
+    S (?:
+      S ([ST]{2,})L|
       LS()|
-      TS([ST]+)L|
+      TS([ST]{2,})L|
       LT()|
       LL()|
-      TL([ST]+)L) )|
+      TL([ST]{2,})L) )|
     TS(?:
       SS()|ST()|SL()|TS()|TT() )|
     TT(?:
@@ -23,10 +24,10 @@ def run(code):
       SS()|ST()|TS()|TT() )
   '''
   debug = (lambda s:
-           #print("CPSR -> {}".format(CPSR)) or
-           #print("stack -> {}".format(Stack)) or
-           #print("heap -> {}".format(Heap)) or
-           ##print("labels -> {}".format(Labels)) or
+           #print("  CPSR -> {}".format(CPSR)) or
+           #print(" stack -> {}".format(Stack)) or
+           #print(" heap -> {}".format(Heap)) or
+           ##print(" labels -> {}".format(Labels)) or
            #print("counters -> {}".format(Counters[-10:])) or
            #print(s) or 
            0)
@@ -177,6 +178,12 @@ def run(code):
     #input()
 
 if __name__=='__main__':
-  path = 'STL/fibnancy.stl'
-  code = open(path).read()
+  from sys import argv, stdin
+  from ws_trans import clean_content
+  if len(argv)>1:
+    code = open(argv[1]).read()
+  else:
+    code = stdin.read()
+  code = clean_content(code,'STL')
+  #print(code)
   run(code)

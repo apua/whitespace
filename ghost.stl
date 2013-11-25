@@ -1,0 +1,34 @@
+# initial
+SSSSL TLTT # {0: f(n)}
+SSSSL # add 0
+SSSSL TTT # [0,f(n)]
+TSST # [K]
+
+# if K==0: return
+SLS
+LTS SL
+
+# initial fib
+SSSTL SLS SLS SSSSL SLS # [K,1,1,1,0,0]
+TTS TTS TSST # [K-1] {0:0, 1:1}
+
+'LSS TL' #### loop ####
+# [K]
+SSSTL SLS TTT SLS SLS # [K,1,b,b,b]
+SSSSL TTT TSSS # [K,1,b,b,a+b]
+SSSTL SLT TTS # [K,1,b,b] {1:a+b}
+SSSSL SLT TTS # [K,1,b] {0:b, 1:a+b}
+TSSS TSSS # [K+b+1]
+
+SLS LTT TL # if K<0: loop
+SSSTL TTT TSSS # [K+a+b]
+
+# n:0   1   2   3   4   5   6   7   8   9   10
+# K:0   1   3   6   5   10  9   8   16  15  14
+# b:        1   2       3           5
+
+'LSS SL' ##### end #####
+TLST # n
+LLL
+
+
