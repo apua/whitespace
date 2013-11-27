@@ -65,3 +65,31 @@ so some syntax like ``def`` or ``del`` would not be used.
     即時呈現 PCs (Whitespace 允許 recursive subroutine) /Counters/Stacks/Heaps ...
     或許可做成 spreadsheet 比較好 trace?...(我是不是太超過了...)
 
+
+Idea
+====
+
+::
+    # run and end
+    any(c=='END' or run(c) for c in PCs) and clean() or result
+
+
+**做成 class 會比較好設值**
+
+**應該再跑第二遍, 把 value 都換掉; value 含 number 與 instruction pointer**
+
+- Stack
+- Heap
+
+- INSTRUCTION_PATTERN
+- verbose_output
+
+- Lables
+- Instructions
+- PCs
+  | program counter in list
+
+- not_label
+  | return True if not lable else set_lable and False)
+
+............................

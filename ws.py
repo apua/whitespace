@@ -1,6 +1,9 @@
 def run(code):
 
-  patt = r'''(?:
+  Stack = []
+  Heap = {}
+
+  INSTRUCTION_PATTERN = patt = r'''(?:
     S (?:
       S ([ST]{2,})L|
       LS()|
@@ -23,7 +26,7 @@ def run(code):
     TL(?:
       SS()|ST()|TS()|TT() )
   '''
-  debug = (lambda s:
+  verbose_output = debug = (lambda s:
            #print("  CPSR -> {}".format(CPSR)) or
            #print(" stack -> {}".format(Stack)) or
            #print(" heap -> {}".format(Heap)) or
@@ -31,12 +34,15 @@ def run(code):
            #print("counters -> {}".format(Counters[-10:])) or
            #print(s) or 
            0)
-  num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
-  Stack = []
-  Heap = {}
+
   Labels = {}
+  Instructions = []
+  PCs = CPSR = []
+
+  not_label = lambda v: Labels.__setitem__(v,len(Instructions)) if v else True
+  
+  num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
   Counters = [0]
-  CPSR = []
   Operations = [
     # stack manipulation
     (lambda n: 
@@ -162,16 +168,12 @@ def run(code):
      0),
   ]
   
-  Instructions = []
-  for m in __import__('re').finditer(patt, code, 64):
-    for i,v in enumerate(m.groups()):
-      if v!=None:
-        if i==13:
-          Operations[i](v)
-        else:
-          Instructions.append(Operations[i].__get__(v))
-          #print(len(Instructions)-1, m.group())
-    #print(len(Instructions)-1, m.group(), end='') or input()
+  any(
+    any(Instructions.append(Operations[i].__get__(v))
+        for i,v in enumerate(m.groups(0)) if v!=0)
+    for m in __import__('re').finditer(patt, code, 64)
+      if not_label(m.group(14)) #24
+  )
 
   for c in Counters:
     Instructions[c]()
