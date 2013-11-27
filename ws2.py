@@ -162,14 +162,17 @@ def run(code):
      0),
   ]
   
-  any(
-    any(Instructions.append(Operations[i].__get__(v))
-        for i,v in enumerate(m.groups()) if v)
+  any(Instructions.append(m.groups())
     for m in __import__('re').finditer(patt, code, 64)
       if not m.group(18) or Labels.__setitem__(m.group(18),len(Instructions))
   )
 
-  #for c in PCs: Instructions[c]()
+  any(
+    any(Instructions.__setitem__(i,Operations[j].__get__(v))
+        for j,v in enumerate(T) if v)
+    for i,T in enumerate(Instructions)
+  )
+
   any(c>-1 and Instructions[c](c) for c in PCs) #or result
 
 
