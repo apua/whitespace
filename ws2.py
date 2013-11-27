@@ -12,7 +12,7 @@ def run(code):
       TS([ST]{2,})L|
       (LT)|
       (LL)|
-      TL([ST]{2,})L) )|
+      TL([ST]{2,})L )|
     TS(?:
       (SS)|(ST)|(SL)|(TS)|(TT) )|
     TT(?:
@@ -27,6 +27,7 @@ def run(code):
       TT([ST]+)L|
       (TL)|
       (LL) )
+    )
   '''
 
   Labels = {}
