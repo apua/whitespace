@@ -8,11 +8,11 @@ def run(code):
   patt = r'''(?:
     S (?:
       S ([ST]{2,})L|
-      (LS)|
       TS([ST]{2,})L|
+      TL([ST]{2,})L|
+      (LS)|
       (LT)|
-      (LL)|
-      TL([ST]{2,})L )|
+      (LL) )|
     TS(?:
       (SS)|(ST)|(SL)|(TS)|(TT) )|
     TT(?:
@@ -41,11 +41,11 @@ def run(code):
   Operations = [
     # stack manipulation
     (lambda n,c: Stack.append(num(n)) or c+1 ),
-    (lambda n,c: Stack.append(Stack[-1]) or c+1 ),
     (lambda n,c: Stack.append(Stack[-num(n)]) or c+1 ),
+    (lambda n,c: any(Stack.pop(-2) and 0 for t in range(num(n))) or c+1 ),
+    (lambda n,c: Stack.append(Stack[-1]) or c+1 ),
     (lambda n,c: Stack.insert(-1,Stack.pop()) or  c+1 ),
     (lambda n,c: Stack.pop() and 0 or c+1 ),
-    (lambda n,c: any(Stack.pop(-2) and 0 for t in range(n)) or c+1 ),
     # arithmetic
     (lambda n,c: Stack.append(Stack.pop(-2)+Stack.pop()) or c+1 ),
     (lambda n,c: Stack.append(Stack.pop(-2)-Stack.pop()) or c+1 ),
