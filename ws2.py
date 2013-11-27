@@ -136,9 +136,7 @@ def run(code):
     # flow
     (lambda n,c: 0),
     (lambda n,c:
-     PCs.append(Labels[n]) or
-     #not CPSR and CPSR.append(c+1) or 
-     CPSR.append(c+1) or
+     PCs.append(CPSR.append(c+1) or Labels[n]) or
      debug('call subroutine') or 
      0),
     (lambda n,c:
