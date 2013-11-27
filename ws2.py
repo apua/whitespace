@@ -28,14 +28,6 @@ def run(code):
       (TL)|
       (LL) )
   '''
-  debug = (lambda s:
-           #print("  CPSR -> {}".format(CPSR)) or
-           #print(" stack -> {}".format(Stack)) or
-           #print(" heap -> {}".format(Heap)) or
-           ##print(" labels -> {}".format(Labels)) or
-           #print("PCs -> {}".format(PCs[-10:])) or
-           #print(s) or 
-           0)
 
   Labels = {}
   Instructions = []
