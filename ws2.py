@@ -43,8 +43,8 @@ def run(code):
     (lambda n,c: Stack.append(Stack[-1]) or c+1 ),
     (lambda n,c: Stack.append(Stack[-num(n)]) or c+1 ),
     (lambda n,c: Stack.insert(-1,Stack.pop()) or  c+1 ),
-    (lambda n,c: Stack.__delitem__(-1) or c+1 ),
-    (lambda n,c: any(Stack.__delitem__(-2) for t in range(n)) or c+1 ),
+    (lambda n,c: Stack.pop() and 0 or c+1 ),
+    (lambda n,c: any(Stack.pop(-2) and 0 for t in range(n)) or c+1 ),
     # arithmetic
     (lambda n,c: Stack.append(Stack.pop(-2)+Stack.pop()) or c+1 ),
     (lambda n,c: Stack.append(Stack.pop(-2)-Stack.pop()) or c+1 ),
