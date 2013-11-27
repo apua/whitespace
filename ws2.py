@@ -45,96 +45,26 @@ def run(code):
   num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
   Operations = [
     # stack manipulation
-    (lambda n,c: 
-     Stack.append(num(n)) or
-     PCs.append(c+1) or 
-     debug('push') or
-     0),
-    (lambda n,c: 
-     Stack.append(Stack[-1]) or
-     PCs.append(c+1) or 
-     debug('copy 1th item') or 
-     0),
-    (lambda n,c: 
-     Stack.append(Stack[-num(n)]) or
-     PCs.append(c+1) or 
-     debug('copy nth item') or 
-     0),
-    (lambda n,c:
-     Stack.insert(-1,Stack.pop()) or 
-     PCs.append(c+1) or 
-     debug('swap top 2 items') or 
-     0),
-    (lambda n,c:
-     Stack.__delitem__(-1) or
-     PCs.append(c+1) or 
-     debug('drop top item') or 
-     0),
-    (lambda n,c:
-     any(Stack.__delitem__(-2) for t in range(n)) or
-     PCs.append(c+1) or 
-     debug('drop [-n-1:-1] items') or 
-     0),
+    (lambda n,c: PCs.append(Stack.append(num(n)) or c+1) ),
+    (lambda n,c: PCs.append(Stack.append(Stack[-1]) or c+1) ),
+    (lambda n,c: PCs.append(Stack.append(Stack[-num(n)]) or c+1) ),
+    (lambda n,c: PCs.append(Stack.insert(-1,Stack.pop()) or  c+1) ),
+    (lambda n,c: PCs.append(Stack.__delitem__(-1) or c+1) ),
+    (lambda n,c: PCs.append(any(Stack.__delitem__(-2) for t in range(n)) or c+1) ),
     # arithmetic
-    (lambda n,c:
-     Stack.append(Stack.pop()+Stack.pop()) or
-     PCs.append(c+1) or 
-     debug('+') or 
-     0),
-    (lambda n,c:
-     Stack.append(Stack.pop(-2)-Stack.pop()) or
-     PCs.append(c+1) or 
-     debug('-') or
-     0),
-    (lambda n,c:
-     Stack.append(Stack.pop()*Stack.pop()) or
-     PCs.append(c+1) or 
-     debug('*') or 
-     0),
-    (lambda n,c:
-     Stack.append(Stack.pop()//Stack.pop()) or
-     PCs.append(c+1) or 
-     debug('/') or 
-     0),
-    (lambda n,c:
-     Stack.append(Stack.pop()%Stack.pop()) or
-     PCs.append(c+1) or 
-     debug('%') or 
-     0),
+    (lambda n,c: PCs.append(Stack.append(Stack.pop(-2)+Stack.pop()) or c+1) ),
+    (lambda n,c: PCs.append(Stack.append(Stack.pop(-2)-Stack.pop()) or c+1) ),
+    (lambda n,c: PCs.append(Stack.append(Stack.pop(-2)*Stack.pop()) or c+1) ),
+    (lambda n,c: PCs.append(Stack.append(Stack.pop(-2)//Stack.pop()) or c+1) ),
+    (lambda n,c: PCs.append(Stack.append(Stack.pop(-2)%Stack.pop()) or c+1) ),
     # heap
-    (lambda n,c:
-     Heap.__setitem__(Stack.pop(-2), Stack.pop()) or
-     PCs.append(c+1) or 
-     debug('store') or 
-     0),
-    (lambda n,c:
-     Stack.append(Heap.__getitem__(Stack.pop())) or
-     PCs.append(c+1) or 
-     debug('retrieve') or 
-     0),
+    (lambda n,c: PCs.append(Heap.__setitem__(Stack.pop(-2), Stack.pop()) or c+1) ),
+    (lambda n,c: PCs.append(Stack.append(Heap.__getitem__(Stack.pop())) or c+1) ),
     # IO
-    (lambda n,c:
-     __import__('sys').stdout.write(chr(Stack.pop())) and
-     __import__('sys').stdout.flush() or 
-     PCs.append(c+1) or
-     debug('%c') or
-     0),
-    (lambda n,c:
-     __import__('sys').stdout.write(str(Stack.pop())) and 
-     __import__('sys').stdout.flush() or 
-     PCs.append(c+1) or
-     debug('%d') or 
-     0),
-    (lambda n,c:
-     Heap.__setitem__(Stack.pop(),ord(__import__('sys').stdin.read(1))) or
-     PCs.append(c+1) or
-     debug('&c') or 
-     0),
-    (lambda n,c:
-     Heap.__setitem__(Stack.pop(),int(input())) or
-     PCs.append(c+1) or
-     debug('%d') or 
-     0),
+    (lambda n,c: PCs.append(__import__('sys').stdout.write(chr(Stack.pop())) and __import__('sys').stdout.flush() or c+1) ),
+    (lambda n,c: PCs.append(__import__('sys').stdout.write(str(Stack.pop())) and __import__('sys').stdout.flush() or c+1) ),
+    (lambda n,c: PCs.append(Heap.__setitem__(Stack.pop(),ord(__import__('sys').stdin.read(1))) or c+1) ),
+    (lambda n,c: PCs.append(Heap.__setitem__(Stack.pop(),int(input())) or c+1) ),
     # flow
     (lambda n,c: 0),
     (lambda n,c: PCs.append(eval('CPSR.append({c}+1) or Labels["{n}"]'.format(n=n,c=c))) ),
