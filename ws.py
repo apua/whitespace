@@ -39,8 +39,6 @@ def run(code):
   Instructions = []
   PCs = CPSR = []
 
-  not_label = lambda v: Labels.__setitem__(v,len(Instructions)) if v else True
-  
   num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
   Counters = [0]
   Operations = [
@@ -71,7 +69,7 @@ def run(code):
      debug('drop top item') or 
      0),
     (lambda n:
-     Stack.__delslice__(len(Stack)-1-num(n),len(Stack)-1) or
+     any(Stack.__delitem__(-2) for t in range(n)) or
      Counters.append(c+1) or 
      debug('drop [-n-1:-1] items') or 
      0),
@@ -168,6 +166,7 @@ def run(code):
      0),
   ]
   
+  not_label = lambda v: Labels.__setitem__(v,len(Instructions)) if v else True
   any(
     any(Instructions.append(Operations[i].__get__(v))
         for i,v in enumerate(m.groups(0)) if v!=0)
@@ -175,9 +174,10 @@ def run(code):
       if not_label(m.group(14)) #24
   )
 
-  for c in Counters:
-    Instructions[c]()
-    #input()
+  for c in Counters: Instructions[c]()
+  # run and end
+  #any(c=='END' or run(c) for c in PCs) and result
+
 
 if __name__=='__main__':
   from sys import argv, stdin
