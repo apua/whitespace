@@ -1,6 +1,6 @@
 def run(code):
 
-  global PCs, CPSR, Stack
+  global PCs, CPSR, Stack, Labels
 
   Stack = []
   Heap = {}
@@ -137,10 +137,10 @@ def run(code):
      0),
     # flow
     (lambda n,c: 0),
-    (lambda n,c: PCs.append(eval('CPSR.append({c}+1) or {n}'.format(n=n,c=c))) ),
-    (lambda n,c: PCs.append(eval('{n}'.format(n=n,c=c))) ),
-    (lambda n,c: PCs.append(eval('{n} if Stack.pop()==0 else {c}+1 '.format(n=n,c=c))) ),
-    (lambda n,c: PCs.append(eval('{n} if Stack.pop()<0 else {c}+1 '.format(n=n,c=c))) ),
+    (lambda n,c: PCs.append(eval('CPSR.append({c}+1) or Labels["{n}"]'.format(n=n,c=c))) ),
+    (lambda n,c: PCs.append(eval('Labels["{n}"]'.format(n=n,c=c))) ),
+    (lambda n,c: PCs.append(eval('Labels["{n}"] if Stack.pop()==0 else {c}+1 '.format(n=n,c=c))) ),
+    (lambda n,c: PCs.append(eval('Labels["{n}"] if Stack.pop()<0 else {c}+1 '.format(n=n,c=c))) ),
     (lambda n,c: PCs.append(eval('CPSR.pop()'.format(n=n,c=c))) ),
     (lambda n,c: PCs.append(eval('-1'.format(n=n,c=c))) ),
   ]
@@ -151,11 +151,8 @@ def run(code):
     for m in __import__('re').finditer(patt, code, 64)
   )
 
-  any( Instructions.__setitem__(c,Operations[T[0]].__get__(Labels.get(T[1],T[1])))
-    for c,T in enumerate(Instructions)
-  )
-
-  any(c>-1 and Instructions[c](c) for c in PCs) #or result
+  any(c>-1 and Operations[Instructions[c][0]](Instructions[c][1],c) 
+    for c in PCs) #or result
 
 
 if __name__=='__main__':
