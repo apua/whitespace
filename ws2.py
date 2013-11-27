@@ -62,12 +62,12 @@ def run(code):
     (lambda n,c: Heap.__setitem__(Stack.pop(),int(input())) or c+1 ),
     # flow
     (lambda n,c: 0),
-    (lambda n,c: eval('CPSR.append({c}+1) or Labels["{n}"]'.format(n=n,c=c)) ),
-    (lambda n,c: eval('Labels["{n}"]'.format(n=n,c=c)) ),
-    (lambda n,c: eval('Labels["{n}"] if Stack.pop()==0 else {c}+1 '.format(n=n,c=c)) ),
-    (lambda n,c: eval('Labels["{n}"] if Stack.pop()<0 else {c}+1 '.format(n=n,c=c)) ),
-    (lambda n,c: eval('CPSR.pop()'.format(n=n,c=c)) ),
-    (lambda n,c: eval('-1'.format(n=n,c=c)) ),
+    (lambda n,c: CPSR.append(c+1) or Labels[n] ),
+    (lambda n,c: Labels[n] ),
+    (lambda n,c: Labels[n] if Stack.pop()==0 else c+1 ),
+    (lambda n,c: Labels[n] if Stack.pop()<0 else c+1 ),
+    (lambda n,c: CPSR.pop() ),
+    (lambda n,c: -1 ),
   ]
   
   any(
