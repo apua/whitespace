@@ -69,24 +69,21 @@ so some syntax like ``def`` or ``del`` would not be used.
 Idea
 ====
 
-::
-    # run and end
-    any(c=='END' or run(c) for c in PCs) and clean() or result
+*注意*: 
 
+    當前的目標是整理出 **精簡的 compiler**, 而不是理想的 compiler
 
-**做成 class 會比較好設值**
+其他考慮 (如 debug):
 
-**應該再跑第二遍, 把 value 都換掉; value 含 number 與 instruction pointer**
-
-**改成 dict 來找各 operation, 避免用 list 而 index 不明確, 除此之外, 也讓 debug 好做**
-
-**新增一個動作叫 clean(), 在程式結束時做清理 (也可以什麼都不做)**
+* 改成 dict 來找各 operation, 避免用 list 而 index 不明確, 除此之外, 也讓 debug 好做
+* 新增一個動作叫 clean(), 在程式結束時做清理
+* 做成 class 可能比較好設值?
+* 跑兩遍來換掉 number
 
 - Stack
 - Heap
 
 - INSTRUCTION_PATTERN
-- verbose_output
 
 - Lables
 - Instructions
@@ -96,4 +93,3 @@ Idea
 - not_label
   | return True if not lable else set_lable and False)
 
-............................
