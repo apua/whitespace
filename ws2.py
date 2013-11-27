@@ -1,5 +1,7 @@
 def run(code):
 
+  global PCs, CPSR, Stack
+
   Stack = []
   Heap = {}
 
@@ -135,12 +137,12 @@ def run(code):
      0),
     # flow
     (lambda n,c: 0),
-    (lambda n,c: PCs.append(CPSR.append(c+1) or n)         or debug('subroutine') ),
-    (lambda n,c: PCs.append(n)                             or debug('jump') ),
-    (lambda n,c: PCs.append(n if Stack.pop()==0 else c+1 ) or debug('z-jump if 0') ),
-    (lambda n,c: PCs.append(n if Stack.pop()<0 else c+1 )  or debug('n-jump if neg') ),
-    (lambda n,c: PCs.append(CPSR.pop())                    or debug('end subroutine') ),
-    (lambda n,c: PCs.append(-1)                            or debug('end program') ),
+    (lambda n,c: PCs.append(eval('CPSR.append({c}+1) or {n}'.format(n=n,c=c))) ),
+    (lambda n,c: PCs.append(eval('{n}'.format(n=n,c=c))) ),
+    (lambda n,c: PCs.append(eval('{n} if Stack.pop()==0 else {c}+1 '.format(n=n,c=c))) ),
+    (lambda n,c: PCs.append(eval('{n} if Stack.pop()<0 else {c}+1 '.format(n=n,c=c))) ),
+    (lambda n,c: PCs.append(eval('CPSR.pop()'.format(n=n,c=c))) ),
+    (lambda n,c: PCs.append(eval('-1'.format(n=n,c=c))) ),
   ]
   
   any( any( Instructions.append((p,v)) for p,v in enumerate(m.groups()) if v )
