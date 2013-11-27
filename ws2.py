@@ -145,9 +145,10 @@ def run(code):
     (lambda n,c: PCs.append(eval('-1'.format(n=n,c=c))) ),
   ]
   
-  any( any( Instructions.append((p,v)) for p,v in enumerate(m.groups()) if v )
+  any(
+    any( Instructions.append((p,v)) if p!=17 else Labels.__setitem__(v, len(Instructions))
+      for p,v in enumerate(m.groups()) if v )
     for m in __import__('re').finditer(patt, code, 64)
-      if not m.group(18) or Labels.__setitem__(m.group(18),len(Instructions))
   )
 
   any( Instructions.__setitem__(c,Operations[T[0]].__get__(Labels.get(T[1],T[1])))
