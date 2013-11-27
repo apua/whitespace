@@ -135,42 +135,21 @@ def run(code):
      0),
     # flow
     (lambda n,c: 0),
-    (lambda n,c:
-     PCs.append(CPSR.append(c+1) or Labels[n]) or
-     debug('call subroutine') or 
-     0),
-    (lambda n,c:
-     PCs.append(Labels[n]) or
-     debug('jump') or 
-     0),
-    (lambda n,c:
-     PCs.append(Labels[n] if Stack.pop()==0 else c+1 ) or 
-     debug('jump if 0') or 
-     0),
-    (lambda n,c:
-     PCs.append(Labels[n] if Stack.pop()<0 else c+1 ) or 
-     debug('jump if negative') or 
-     0),
-    (lambda n,c:
-     PCs.append(CPSR.pop()) or
-     debug('end subroutine') or 
-     0),
-    (lambda n,c:
-     PCs.append(-1) or 
-     #any(PCs.pop() and 0 for c in range(len(PCs))) or
-     debug('end program') or 
-     0),
+    (lambda n,c: PCs.append(CPSR.append(c+1) or n)         or debug('subroutine') ),
+    (lambda n,c: PCs.append(n)                             or debug('jump') ),
+    (lambda n,c: PCs.append(n if Stack.pop()==0 else c+1 ) or debug('z-jump if 0') ),
+    (lambda n,c: PCs.append(n if Stack.pop()<0 else c+1 )  or debug('n-jump if neg') ),
+    (lambda n,c: PCs.append(CPSR.pop())                    or debug('end subroutine') ),
+    (lambda n,c: PCs.append(-1)                            or debug('end program') ),
   ]
   
-  any(Instructions.append(m.groups())
+  any( any( Instructions.append((p,v)) for p,v in enumerate(m.groups()) if v )
     for m in __import__('re').finditer(patt, code, 64)
       if not m.group(18) or Labels.__setitem__(m.group(18),len(Instructions))
   )
 
-  any(
-    any(Instructions.__setitem__(i,Operations[j].__get__(v))
-        for j,v in enumerate(T) if v)
-    for i,T in enumerate(Instructions)
+  any( Instructions.__setitem__(c,Operations[T[0]].__get__(Labels.get(T[1],T[1])))
+    for c,T in enumerate(Instructions)
   )
 
   any(c>-1 and Instructions[c](c) for c in PCs) #or result
