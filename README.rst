@@ -78,6 +78,10 @@ Idea
 
 **應該再跑第二遍, 把 value 都換掉; value 含 number 與 instruction pointer**
 
+**改成 dict 來找各 operation, 避免用 list 而 index 不明確, 除此之外, 也讓 debug 好做**
+
+**新增一個動作叫 clean(), 在程式結束時做清理 (也可以什麼都不做)**
+
 - Stack
 - Heap
 
