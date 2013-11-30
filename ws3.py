@@ -46,6 +46,7 @@ LLL
     CPSR = []
     #putchar = lambda u,o=__import__('sys').stdout: o.write(u) and o.flush()
     putchar = result.append
+    getchar = lambda: __import__('sys').stdin.read(1)
     num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
     
     def run(code):
@@ -124,12 +125,12 @@ LLL
           )
         for c in PCs)
     
-      return ''.join(result)
+      return print(''.join(result))
 
-    return run(S)
+    run(S)
 
 
 if __name__=='__main__':
-  print(25,CCCCCCC(25))
-  print(13,CCCCCCC(13))
-  print(10,CCCCCCC(10))
+  #import sys
+  #run(open(sys.argv[1]).read())
+  CCCCCCC(25)
