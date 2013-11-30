@@ -61,7 +61,7 @@ def run(code):
     'Heap.__setitem__(Stack.pop(),ord(getchar()))',
     'Heap.__setitem__(Stack.pop(),int(input()))',
     # flow
-    '0',
+    0,
     'CPSR.append(c+1) or {}',
     '{}',
     '{} if Stack.pop()==0 else c+1',
