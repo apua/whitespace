@@ -124,12 +124,13 @@ LLL
           )
         for c in PCs)
     
-      return print(''.join(result))
+      return ''.join(result)
 
-    run(S)
+    return run(S)
 
 
 if __name__=='__main__':
-  #import sys
-  #run(open(sys.argv[1]).read())
-  CCCCCCC(25)
+  n = 25; print(n, CCCCCCC(n))
+  n = 13; print(n, CCCCCCC(n))
+  n = 10; print(n, CCCCCCC(n))
+  n = 16; print(n, CCCCCCC(n))
