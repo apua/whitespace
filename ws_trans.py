@@ -27,11 +27,12 @@ def output_result(content, output_file=None):
     print(content)
 
 if __name__=='__main__':
-  path = "http://compsoc.dur.ac.uk/whitespace/tutorial.html"
-  path = "http://compsoc.dur.ac.uk/whitespace/hworld.ws"
-  path = "http://compsoc.dur.ac.uk/whitespace/name.ws"
-  path = 'WS/fib.ws'
+  #path = "http://compsoc.dur.ac.uk/whitespace/tutorial.html"
+  #path = "http://compsoc.dur.ac.uk/whitespace/hworld.ws"
+  #path = "http://compsoc.dur.ac.uk/whitespace/name.ws"
+  #path = 'WS/fib.ws'
+  path = 'ghost.stl'
   C = get_content(path)
-  C = clean_content(C)
-  C = translate_content(C,' \t\n', 'STL')
-  output_result(C,'STL/fibnancy.stl')
+  C = clean_content(C,'STL')
+  #C = translate_content(C,' \t\n', 'STL')
+  output_result(C,'STL/ghost.stl')
