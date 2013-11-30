@@ -33,7 +33,6 @@ TLST # n
 LLL
 '''):
   
-    global S, H, result, buff
 
     buff = [str(num)]
     result = []
@@ -50,7 +49,7 @@ LLL
     )
     
     any(c>-1 and
-        P.append( 
+        P.append([S,H,result,buff]and
           eval( O[I[c][0]].format(
             L.get(I[c][1]) if I[c][0]>2 else
               eval('+-'[I[c][1][0]!='S']+'0b'+I[c][1][1:].translate({83:48,84:49}))
