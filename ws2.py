@@ -40,32 +40,32 @@ def run(code):
   num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
   Operations = [
     # stack manipulation
-    'Stack.append({n}) or {c}+1',
-    'Stack.append(Stack[-{n}]) or {c}+1',
-    'any(Stack.pop(-2) and 0 for t in range({n})) or {c}+1',
-    'Stack.append(Stack[-1]) or {c}+1',
-    'Stack.insert(-1,Stack.pop()) or  {c}+1',
-    'Stack.pop() and 0 or {c}+1',
+    'Stack.append({})',
+    'Stack.append(Stack[-{}])',
+    'any(Stack.pop(-2) and 0 for t in range({}))',
+    'Stack.append(Stack[-1])',
+    'Stack.insert(-1,Stack.pop())',
+    'Stack.pop() and 0',
     # arithmetic
-    'Stack.append(Stack.pop(-2)+Stack.pop()) or {c}+1',
-    'Stack.append(Stack.pop(-2)-Stack.pop()) or {c}+1',
-    'Stack.append(Stack.pop(-2)*Stack.pop()) or {c}+1',
-    'Stack.append(Stack.pop(-2)//Stack.pop()) or {c}+1',
-    'Stack.append(Stack.pop(-2)%Stack.pop()) or {c}+1',
+    'Stack.append(Stack.pop(-2)+Stack.pop())',
+    'Stack.append(Stack.pop(-2)-Stack.pop())',
+    'Stack.append(Stack.pop(-2)*Stack.pop())',
+    'Stack.append(Stack.pop(-2)//Stack.pop())',
+    'Stack.append(Stack.pop(-2)%Stack.pop())',
     # heap
-    'Heap.__setitem__(Stack.pop(-2), Stack.pop()) or {c}+1',
-    'Stack.append(Heap.__getitem__(Stack.pop())) or {c}+1',
+    'Heap.__setitem__(Stack.pop(-2), Stack.pop())',
+    'Stack.append(Heap.__getitem__(Stack.pop()))',
     # IO
-    'putchar(chr(Stack.pop())) or {c}+1',
-    'putchar(str(Stack.pop())) or {c}+1',
-    'Heap.__setitem__(Stack.pop(),ord(getchar())) or {c}+1',
-    'Heap.__setitem__(Stack.pop(),int(input())) or {c}+1',
+    'putchar(chr(Stack.pop()))',
+    'putchar(str(Stack.pop()))',
+    'Heap.__setitem__(Stack.pop(),ord(getchar()))',
+    'Heap.__setitem__(Stack.pop(),int(input()))',
     # flow
     '0',
-    'CPSR.append({c}+1) or {n}',
-    '{n}',
-    '{n} if Stack.pop()==0 else {c}+1',
-    '{n} if Stack.pop()<0 else {c}+1',
+    'CPSR.append(c+1) or {}',
+    '{}',
+    '{} if Stack.pop()==0 else c+1',
+    '{} if Stack.pop()<0 else c+1',
     'CPSR.pop()',
     '-1',
   ]
@@ -77,10 +77,12 @@ def run(code):
   )
 
   any(c>-1 and
-      PCs.append( eval( Operations[Instructions[c][0]].format(
-        n = Labels.get(Instructions[c][1]) if Instructions[c][0]>4 else num(Instructions[c][1]) ,
-        c = c,
-      ) ) )
+      PCs.append( 
+        eval( Operations[Instructions[c][0]].format(
+          Labels.get(Instructions[c][1]) if Instructions[c][0]>2 else num(Instructions[c][1]) ,
+          ) + ( Instructions[c][0]<17 and ' or c+1' or '' )
+        )
+      )
     for c in PCs) #or result
 
 
