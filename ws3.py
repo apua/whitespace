@@ -44,7 +44,6 @@ LLL
       Instructions = []
       PCs = [0]
       CPSR = []
-      #putchar = lambda u,o=__import__('sys').stdout: o.write(u) and o.flush()
       putchar = result.append
       num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
     
