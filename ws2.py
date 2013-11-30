@@ -1,6 +1,6 @@
 def run(code):
 
-  global PCs, CPSR, Stack, Labels
+  global PCs, CPSR, Stack, Labels, Heap
 
   Stack = []
   Heap = {}
@@ -53,8 +53,10 @@ def run(code):
     (lambda n,c: Stack.append(Stack.pop(-2)//Stack.pop()) or c+1 ),
     (lambda n,c: Stack.append(Stack.pop(-2)%Stack.pop()) or c+1 ),
     # heap
-    (lambda n,c: Heap.__setitem__(Stack.pop(-2), Stack.pop()) or c+1 ),
-    (lambda n,c: Stack.append(Heap.__getitem__(Stack.pop())) or c+1 ),
+    #(lambda n,c: Heap.__setitem__(Stack.pop(-2), Stack.pop()) or c+1 ),
+    #(lambda n,c: Stack.append(Heap.__getitem__(Stack.pop())) or c+1 ),
+    (lambda n,c: eval( 'Heap.__setitem__(Stack.pop(-2), Stack.pop()) or {1}+1'.format(n,c) ) ),
+    (lambda n,c: eval( 'Stack.append(Heap.__getitem__(Stack.pop())) or {1}+1'.format(n,c) ) ),
     # IO
     (lambda n,c: putchar(chr(Stack.pop())) or c+1 ),
     (lambda n,c: putchar(str(Stack.pop())) or c+1 ),
