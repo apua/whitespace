@@ -1,6 +1,6 @@
 def run(code):
 
-  global PCs, CPSR, Stack, Labels, Heap, num, putchar, getchar
+  global CPSR, Stack, Heap, putchar, getchar
 
   Stack = []
   Heap = {}
