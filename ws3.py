@@ -34,20 +34,19 @@ LLL
 '''):
 
   
-      global Stack, Heap, putchar, getchar, buff
+    global Stack, Heap, putchar, getchar, buff
 
-      buff = [str(num)]
-      result = []
-      Stack = []
-      Heap = {}
-      Labels = {}
-      Instructions = []
-      PCs = [0]
-      CPSR = []
-      putchar = result.append
-      num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
+    buff = [str(num)]
+    result = []
+    Stack = []
+    Heap = {}
+    Labels = {}
+    Instructions = []
+    PCs = [0]
+    CPSR = []
+    putchar = result.append
     
-      def run(code):
+    def run(code):
         code = ''.join(c for c in code if c in 'STL')
       
         patt = r'''(?:
@@ -117,7 +116,8 @@ LLL
         any(c>-1 and
             PCs.append( 
               eval( Operations[Instructions[c][0]].format(
-                Labels.get(Instructions[c][1]) if Instructions[c][0]>2 else num(Instructions[c][1]) ,
+                Labels.get(Instructions[c][1]) if Instructions[c][0]>2 else
+                  eval('+-'[Instructions[c][1][0]!='S']+'0b'+Instructions[c][1][1:].translate({83:48,84:49})),
                 ) + ( Instructions[c][0]<17 and ' or c+1' or '' )
               )
             )
