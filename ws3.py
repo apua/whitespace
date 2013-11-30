@@ -34,7 +34,7 @@ LLL
 '''):
 
   
-    global Stack, Heap, putchar, getchar, buff
+    global Stack, Heap, result, buff
 
     buff = [str(num)]
     result = []
@@ -44,7 +44,6 @@ LLL
     I = []
     PCs = [0]
     CPSR = []
-    putchar = result.append
     
     Operations = [
       # stack manipulation
@@ -64,8 +63,8 @@ LLL
       'Heap.__setitem__(Stack.pop(-2), Stack.pop())',
       'Stack.append(Heap.__getitem__(Stack.pop()))',
       # IO
-      'putchar(chr(Stack.pop()))',
-      'putchar(str(Stack.pop()))',
+      'result.append(chr(Stack.pop()))',
+      'result.append(str(Stack.pop()))',
       'Heap.__setitem__(Stack.pop(),ord(getchar()))',
       'Heap.__setitem__(Stack.pop(),int(buff.pop(0)))',
       # flow
