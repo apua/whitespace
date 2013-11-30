@@ -32,7 +32,6 @@ SSSTL TTT TSSS # [K+a+b]
 TLST # n
 LLL
 '''):
-
   
     global S, H, result, buff
 
@@ -45,7 +44,7 @@ LLL
     P = [0]
     C = []
     
-    Operations = ['S.append({})','S.append(S[-{}])','any(S.pop(-2) and 0 for t in range({}))','S.append(S[-1])','S.insert(-1,S.pop())','S.pop() and 0','S.append(S.pop(-2)+S.pop())','S.append(S.pop(-2)-S.pop())','S.append(S.pop(-2)*S.pop())','S.append(S.pop(-2)//S.pop())','S.append(S.pop(-2)%S.pop())','H.__setitem__(S.pop(-2), S.pop())','S.append(H.__getitem__(S.pop()))','result.append(chr(S.pop()))','result.append(str(S.pop()))','H.__setitem__(S.pop(),ord(getchar()))','H.__setitem__(S.pop(),int(buff.pop(0)))',0,'C.append(c+1) or {}','{}','{} if S.pop()==0 else c+1','{} if S.pop()<0 else c+1','C.pop()','-1',]
+    O = ['S.append({})','S.append(S[-{}])','any(S.pop(-2) and 0 for t in range({}))','S.append(S[-1])','S.insert(-1,S.pop())','S.pop() and 0','S.append(S.pop(-2)+S.pop())','S.append(S.pop(-2)-S.pop())','S.append(S.pop(-2)*S.pop())','S.append(S.pop(-2)//S.pop())','S.append(S.pop(-2)%S.pop())','H.__setitem__(S.pop(-2), S.pop())','S.append(H.__getitem__(S.pop()))','result.append(chr(S.pop()))','result.append(str(S.pop()))','H.__setitem__(S.pop(),ord(getchar()))','H.__setitem__(S.pop(),int(buff.pop(0)))',0,'C.append(c+1) or {}','{}','{} if S.pop()==0 else c+1','{} if S.pop()<0 else c+1','C.pop()','-1',]
     
     any(
       any( I.append((p,v)) if p!=17 else L.__setitem__(v, len(I))
@@ -55,9 +54,9 @@ LLL
     
     any(c>-1 and
         P.append( 
-          eval( Operations[I[c][0]].format(
+          eval( O[I[c][0]].format(
             L.get(I[c][1]) if I[c][0]>2 else
-              eval('+-'[I[c][1][0]!='S']+'0b'+I[c][1][1:].translate({83:48,84:49})),
+              eval('+-'[I[c][1][0]!='S']+'0b'+I[c][1][1:].translate({83:48,84:49}))
             ) + ( I[c][0]<17 and ' or c+1' or '' )
           )
         )
