@@ -42,8 +42,8 @@ LLL
     H = {}
     L = {}
     I = []
-    PCs = [0]
-    CPSR = []
+    P = [0]
+    C = []
     
     Operations = [
       # S manipulation
@@ -69,11 +69,11 @@ LLL
       'H.__setitem__(S.pop(),int(buff.pop(0)))',
       # flow
       0,
-      'CPSR.append(c+1) or {}',
+      'C.append(c+1) or {}',
       '{}',
       '{} if S.pop()==0 else c+1',
       '{} if S.pop()<0 else c+1',
-      'CPSR.pop()',
+      'C.pop()',
       '-1',
     ]
     
@@ -84,14 +84,14 @@ LLL
     )
     
     any(c>-1 and
-        PCs.append( 
+        P.append( 
           eval( Operations[I[c][0]].format(
             L.get(I[c][1]) if I[c][0]>2 else
               eval('+-'[I[c][1][0]!='S']+'0b'+I[c][1][1:].translate({83:48,84:49})),
             ) + ( I[c][0]<17 and ' or c+1' or '' )
           )
         )
-      for c in PCs)
+      for c in P)
     
     return ''.join(result)
 
