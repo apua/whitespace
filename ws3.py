@@ -41,7 +41,7 @@ LLL
     Stack = []
     Heap = {}
     Labels = {}
-    Instructions = []
+    I = Instructions = []
     PCs = [0]
     CPSR = []
     putchar = result.append
@@ -108,17 +108,17 @@ LLL
         ]
         
         any(
-          any( Instructions.append((p,v)) if p!=17 else Labels.__setitem__(v, len(Instructions))
+          any( I.append((p,v)) if p!=17 else Labels.__setitem__(v, len(I))
             for p,v in enumerate(m.groups()) if v )
           for m in __import__('re').finditer(patt, code, 64)
         )
       
         any(c>-1 and
             PCs.append( 
-              eval( Operations[Instructions[c][0]].format(
-                Labels.get(Instructions[c][1]) if Instructions[c][0]>2 else
-                  eval('+-'[Instructions[c][1][0]!='S']+'0b'+Instructions[c][1][1:].translate({83:48,84:49})),
-                ) + ( Instructions[c][0]<17 and ' or c+1' or '' )
+              eval( Operations[I[c][0]].format(
+                Labels.get(I[c][1]) if I[c][0]>2 else
+                  eval('+-'[I[c][1][0]!='S']+'0b'+I[c][1][1:].translate({83:48,84:49})),
+                ) + ( I[c][0]<17 and ' or c+1' or '' )
               )
             )
           for c in PCs)
