@@ -1,4 +1,4 @@
-def CCCCCCC(num,S = '''
+def CCCCCCC(num,CODE= '''
 # initial
 SSSSL TLTT # {0: f(n)}
 SSSSL # add 0
@@ -80,7 +80,7 @@ LLL
     any(
       any( I.append((p,v)) if p!=17 else L.__setitem__(v, len(I))
         for p,v in enumerate(m.groups()) if v )
-      for m in __import__('re').finditer('(?:S(?:S([ST]{2,})L|TS([ST]{2,})L|TL([ST]{2,})L|(LS)|(LT)|(LL))|TS(?:(SS)|(ST)|(SL)|(TS)|(TT))|TT(?:(S)|(T))|TL(?:(SS)|(ST)|(TS)|(TT))|L(?:SS([ST]+)L|ST([ST]+)L|SL([ST]+)L|TS([ST]+)L|TT([ST]+)L|(TL)|(LL)))', ''.join(c for c in S if c in 'STL'), 64)
+      for m in __import__('re').finditer('(?:S(?:S([ST]{2,})L|TS([ST]{2,})L|TL([ST]{2,})L|(LS)|(LT)|(LL))|TS(?:(SS)|(ST)|(SL)|(TS)|(TT))|TT(?:(S)|(T))|TL(?:(SS)|(ST)|(TS)|(TT))|L(?:SS([ST]+)L|ST([ST]+)L|SL([ST]+)L|TS([ST]+)L|TT([ST]+)L|(TL)|(LL)))', ''.join(c for c in CODE if c in 'STL'), 64)
     )
     
     any(c>-1 and
