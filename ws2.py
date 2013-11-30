@@ -40,9 +40,9 @@ def run(code):
   num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
   Operations = [
     # stack manipulation
-    'Stack.append(num("{n}")) or {c}+1',
-    'Stack.append(Stack[-num("{n}")]) or {c}+1',
-    'any(Stack.pop(-2) and 0 for t in range(num("{n}"))) or {c}+1',
+    'Stack.append({n}) or {c}+1',
+    'Stack.append(Stack[-{n}]) or {c}+1',
+    'any(Stack.pop(-2) and 0 for t in range({n})) or {c}+1',
     'Stack.append(Stack[-1]) or {c}+1',
     'Stack.insert(-1,Stack.pop()) or  {c}+1',
     'Stack.pop() and 0 or {c}+1',
@@ -62,10 +62,10 @@ def run(code):
     'Heap.__setitem__(Stack.pop(),int(input())) or {c}+1',
     # flow
     '0',
-    'CPSR.append({c}+1) or Labels[{"n"}]',
-    'Labels["{n}"]',
-    'Labels["{n}"] if Stack.pop()==0 else {c}+1',
-    'Labels["{n}"] if Stack.pop()<0 else {c}+1',
+    'CPSR.append({c}+1) or {n}',
+    '{n}',
+    '{n} if Stack.pop()==0 else {c}+1',
+    '{n} if Stack.pop()<0 else {c}+1',
     'CPSR.pop()',
     '-1',
   ]
@@ -76,10 +76,9 @@ def run(code):
     for m in __import__('re').finditer(patt, code, 64)
   )
 
-  print(Labels)
   any(c>-1 and
       PCs.append( eval( Operations[Instructions[c][0]].format(
-        n = Instructions[c][1],
+        n = Labels.get(Instructions[c][1]) if Instructions[c][0]>4 else num(Instructions[c][1]) ,
         c = c,
       ) ) )
     for c in PCs) #or result
