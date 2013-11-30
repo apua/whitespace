@@ -45,37 +45,7 @@ LLL
     P = [0]
     C = []
     
-    Operations = [
-      # S manipulation
-      'S.append({})',
-      'S.append(S[-{}])',
-      'any(S.pop(-2) and 0 for t in range({}))',
-      'S.append(S[-1])',
-      'S.insert(-1,S.pop())',
-      'S.pop() and 0',
-      # arithmetic
-      'S.append(S.pop(-2)+S.pop())',
-      'S.append(S.pop(-2)-S.pop())',
-      'S.append(S.pop(-2)*S.pop())',
-      'S.append(S.pop(-2)//S.pop())',
-      'S.append(S.pop(-2)%S.pop())',
-      # H
-      'H.__setitem__(S.pop(-2), S.pop())',
-      'S.append(H.__getitem__(S.pop()))',
-      # IO
-      'result.append(chr(S.pop()))',
-      'result.append(str(S.pop()))',
-      'H.__setitem__(S.pop(),ord(getchar()))',
-      'H.__setitem__(S.pop(),int(buff.pop(0)))',
-      # flow
-      0,
-      'C.append(c+1) or {}',
-      '{}',
-      '{} if S.pop()==0 else c+1',
-      '{} if S.pop()<0 else c+1',
-      'C.pop()',
-      '-1',
-    ]
+    Operations = ['S.append({})','S.append(S[-{}])','any(S.pop(-2) and 0 for t in range({}))','S.append(S[-1])','S.insert(-1,S.pop())','S.pop() and 0','S.append(S.pop(-2)+S.pop())','S.append(S.pop(-2)-S.pop())','S.append(S.pop(-2)*S.pop())','S.append(S.pop(-2)//S.pop())','S.append(S.pop(-2)%S.pop())','H.__setitem__(S.pop(-2), S.pop())','S.append(H.__getitem__(S.pop()))','result.append(chr(S.pop()))','result.append(str(S.pop()))','H.__setitem__(S.pop(),ord(getchar()))','H.__setitem__(S.pop(),int(buff.pop(0)))',0,'C.append(c+1) or {}','{}','{} if S.pop()==0 else c+1','{} if S.pop()<0 else c+1','C.pop()','-1',]
     
     any(
       any( I.append((p,v)) if p!=17 else L.__setitem__(v, len(I))
