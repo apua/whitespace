@@ -47,30 +47,7 @@ LLL
     putchar = result.append
     code = ''.join(c for c in S if c in 'STL')
     
-    patt = r'''(?:
-      S (?:
-        S ([ST]{2,})L|
-        TS([ST]{2,})L|
-        TL([ST]{2,})L|
-        (LS)|
-        (LT)|
-        (LL) )|
-      TS(?:
-        (SS)|(ST)|(SL)|(TS)|(TT) )|
-      TT(?:
-        (S)|(T) )|
-      TL(?:
-        (SS)|(ST)|(TS)|(TT) )|
-      L (?:
-        SS([ST]+)L|
-        ST([ST]+)L|
-        SL([ST]+)L|
-        TS([ST]+)L|
-        TT([ST]+)L|
-        (TL)|
-        (LL) )
-      )
-    '''
+    patt='(?:S(?:S([ST]{2,})L|TS([ST]{2,})L|TL([ST]{2,})L|(LS)|(LT)|(LL))|TS(?:(SS)|(ST)|(SL)|(TS)|(TT))|TT(?:(S)|(T))|TL(?:(SS)|(ST)|(TS)|(TT))|L(?:SS([ST]+)L|ST([ST]+)L|SL([ST]+)L|TS([ST]+)L|TT([ST]+)L|(TL)|(LL)))'
     
     
     Operations = [
@@ -108,7 +85,7 @@ LLL
     any(
       any( I.append((p,v)) if p!=17 else L.__setitem__(v, len(I))
         for p,v in enumerate(m.groups()) if v )
-      for m in __import__('re').finditer(patt, code, 64)
+      for m in __import__('re').finditer(patt, code)
     )
     
     any(c>-1 and
