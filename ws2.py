@@ -40,34 +40,34 @@ def run(code):
   num = lambda n: eval('+-'[n[0]!='S']+'0b'+n[1:].translate({83:48,84:49}))
   Operations = [
     # stack manipulation
-    (lambda n,c: eval( 'Stack.append({n}) or {c}+1'.format(n=num(n),c=c) ) ),
-    (lambda n,c: eval( 'Stack.append(Stack[-{n}]) or {c}+1'.format(n=num(n),c=c) ) ),
-    (lambda n,c: eval( 'any(Stack.pop(-2) and 0 for t in range({n})) or {c}+1'.format(n=num(n),c=c) ) ),
-    (lambda n,c: eval( 'Stack.append(Stack[-1]) or {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'Stack.insert(-1,Stack.pop()) or  {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'Stack.pop() and 0 or {c}+1'.format(n=n,c=c) ) ),
+    'Stack.append(num("{n}")) or {c}+1',
+    'Stack.append(Stack[-num("{n}")]) or {c}+1',
+    'any(Stack.pop(-2) and 0 for t in range(num("{n}"))) or {c}+1',
+    'Stack.append(Stack[-1]) or {c}+1',
+    'Stack.insert(-1,Stack.pop()) or  {c}+1',
+    'Stack.pop() and 0 or {c}+1',
     # arithmetic
-    (lambda n,c: eval( 'Stack.append(Stack.pop(-2)+Stack.pop()) or {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'Stack.append(Stack.pop(-2)-Stack.pop()) or {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'Stack.append(Stack.pop(-2)*Stack.pop()) or {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'Stack.append(Stack.pop(-2)//Stack.pop()) or {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'Stack.append(Stack.pop(-2)%Stack.pop()) or {c}+1'.format(n=n,c=c) ) ),
+    'Stack.append(Stack.pop(-2)+Stack.pop()) or {c}+1',
+    'Stack.append(Stack.pop(-2)-Stack.pop()) or {c}+1',
+    'Stack.append(Stack.pop(-2)*Stack.pop()) or {c}+1',
+    'Stack.append(Stack.pop(-2)//Stack.pop()) or {c}+1',
+    'Stack.append(Stack.pop(-2)%Stack.pop()) or {c}+1',
     # heap
-    (lambda n,c: eval( 'Heap.__setitem__(Stack.pop(-2), Stack.pop()) or {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'Stack.append(Heap.__getitem__(Stack.pop())) or {c}+1'.format(n=n,c=c) ) ),
+    'Heap.__setitem__(Stack.pop(-2), Stack.pop()) or {c}+1',
+    'Stack.append(Heap.__getitem__(Stack.pop())) or {c}+1',
     # IO
-    (lambda n,c: eval( 'putchar(chr(Stack.pop())) or {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'putchar(str(Stack.pop())) or {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'Heap.__setitem__(Stack.pop(),ord(getchar())) or {c}+1'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'Heap.__setitem__(Stack.pop(),int(input())) or {c}+1'.format(n=n,c=c) ) ),
+    'putchar(chr(Stack.pop())) or {c}+1',
+    'putchar(str(Stack.pop())) or {c}+1',
+    'Heap.__setitem__(Stack.pop(),ord(getchar())) or {c}+1',
+    'Heap.__setitem__(Stack.pop(),int(input())) or {c}+1',
     # flow
-    (lambda n,c: eval( '0'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( 'CPSR.append({c}+1) or {n}'.format(n=Labels[n],c=c) ) ),
-    (lambda n,c: eval( '{n}'.format(n=Labels[n],c=c) ) ),
-    (lambda n,c: eval( '{n} if Stack.pop()==0 else {c}+1'.format(n=Labels[n],c=c) ) ),
-    (lambda n,c: eval( '{n} if Stack.pop()<0 else {c}+1'.format(n=Labels[n],c=c) ) ),
-    (lambda n,c: eval( 'CPSR.pop()'.format(n=n,c=c) ) ),
-    (lambda n,c: eval( '-1'.format(n=n,c=c) ) ),
+    '0',
+    'CPSR.append({c}+1) or Labels[{"n"}]',
+    'Labels["{n}"]',
+    'Labels["{n}"] if Stack.pop()==0 else {c}+1',
+    'Labels["{n}"] if Stack.pop()<0 else {c}+1',
+    'CPSR.pop()',
+    '-1',
   ]
   
   any(
@@ -76,7 +76,12 @@ def run(code):
     for m in __import__('re').finditer(patt, code, 64)
   )
 
-  any(c>-1 and PCs.append( Operations[Instructions[c][0]](Instructions[c][1],c) )
+  print(Labels)
+  any(c>-1 and
+      PCs.append( eval( Operations[Instructions[c][0]].format(
+        n = Instructions[c][1],
+        c = c,
+      ) ) )
     for c in PCs) #or result
 
 
