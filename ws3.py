@@ -40,92 +40,88 @@ LLL
     result = []
     Stack = []
     Heap = {}
-    Labels = {}
-    I = Instructions = []
+    L = {}
+    I = []
     PCs = [0]
     CPSR = []
     putchar = result.append
+    code = ''.join(c for c in S if c in 'STL')
     
-    def run(code):
-        code = ''.join(c for c in code if c in 'STL')
-      
-        patt = r'''(?:
-          S (?:
-            S ([ST]{2,})L|
-            TS([ST]{2,})L|
-            TL([ST]{2,})L|
-            (LS)|
-            (LT)|
-            (LL) )|
-          TS(?:
-            (SS)|(ST)|(SL)|(TS)|(TT) )|
-          TT(?:
-            (S)|(T) )|
-          TL(?:
-            (SS)|(ST)|(TS)|(TT) )|
-          L (?:
-            SS([ST]+)L|
-            ST([ST]+)L|
-            SL([ST]+)L|
-            TS([ST]+)L|
-            TT([ST]+)L|
-            (TL)|
-            (LL) )
+    patt = r'''(?:
+      S (?:
+        S ([ST]{2,})L|
+        TS([ST]{2,})L|
+        TL([ST]{2,})L|
+        (LS)|
+        (LT)|
+        (LL) )|
+      TS(?:
+        (SS)|(ST)|(SL)|(TS)|(TT) )|
+      TT(?:
+        (S)|(T) )|
+      TL(?:
+        (SS)|(ST)|(TS)|(TT) )|
+      L (?:
+        SS([ST]+)L|
+        ST([ST]+)L|
+        SL([ST]+)L|
+        TS([ST]+)L|
+        TT([ST]+)L|
+        (TL)|
+        (LL) )
+      )
+    '''
+    
+    
+    Operations = [
+      # stack manipulation
+      'Stack.append({})',
+      'Stack.append(Stack[-{}])',
+      'any(Stack.pop(-2) and 0 for t in range({}))',
+      'Stack.append(Stack[-1])',
+      'Stack.insert(-1,Stack.pop())',
+      'Stack.pop() and 0',
+      # arithmetic
+      'Stack.append(Stack.pop(-2)+Stack.pop())',
+      'Stack.append(Stack.pop(-2)-Stack.pop())',
+      'Stack.append(Stack.pop(-2)*Stack.pop())',
+      'Stack.append(Stack.pop(-2)//Stack.pop())',
+      'Stack.append(Stack.pop(-2)%Stack.pop())',
+      # heap
+      'Heap.__setitem__(Stack.pop(-2), Stack.pop())',
+      'Stack.append(Heap.__getitem__(Stack.pop()))',
+      # IO
+      'putchar(chr(Stack.pop()))',
+      'putchar(str(Stack.pop()))',
+      'Heap.__setitem__(Stack.pop(),ord(getchar()))',
+      'Heap.__setitem__(Stack.pop(),int(buff.pop(0)))',
+      # flow
+      0,
+      'CPSR.append(c+1) or {}',
+      '{}',
+      '{} if Stack.pop()==0 else c+1',
+      '{} if Stack.pop()<0 else c+1',
+      'CPSR.pop()',
+      '-1',
+    ]
+    
+    any(
+      any( I.append((p,v)) if p!=17 else L.__setitem__(v, len(I))
+        for p,v in enumerate(m.groups()) if v )
+      for m in __import__('re').finditer(patt, code, 64)
+    )
+    
+    any(c>-1 and
+        PCs.append( 
+          eval( Operations[I[c][0]].format(
+            L.get(I[c][1]) if I[c][0]>2 else
+              eval('+-'[I[c][1][0]!='S']+'0b'+I[c][1][1:].translate({83:48,84:49})),
+            ) + ( I[c][0]<17 and ' or c+1' or '' )
           )
-        '''
-      
-      
-        Operations = [
-          # stack manipulation
-          'Stack.append({})',
-          'Stack.append(Stack[-{}])',
-          'any(Stack.pop(-2) and 0 for t in range({}))',
-          'Stack.append(Stack[-1])',
-          'Stack.insert(-1,Stack.pop())',
-          'Stack.pop() and 0',
-          # arithmetic
-          'Stack.append(Stack.pop(-2)+Stack.pop())',
-          'Stack.append(Stack.pop(-2)-Stack.pop())',
-          'Stack.append(Stack.pop(-2)*Stack.pop())',
-          'Stack.append(Stack.pop(-2)//Stack.pop())',
-          'Stack.append(Stack.pop(-2)%Stack.pop())',
-          # heap
-          'Heap.__setitem__(Stack.pop(-2), Stack.pop())',
-          'Stack.append(Heap.__getitem__(Stack.pop()))',
-          # IO
-          'putchar(chr(Stack.pop()))',
-          'putchar(str(Stack.pop()))',
-          'Heap.__setitem__(Stack.pop(),ord(getchar()))',
-          'Heap.__setitem__(Stack.pop(),int(buff.pop(0)))',
-          # flow
-          0,
-          'CPSR.append(c+1) or {}',
-          '{}',
-          '{} if Stack.pop()==0 else c+1',
-          '{} if Stack.pop()<0 else c+1',
-          'CPSR.pop()',
-          '-1',
-        ]
-        
-        any(
-          any( I.append((p,v)) if p!=17 else Labels.__setitem__(v, len(I))
-            for p,v in enumerate(m.groups()) if v )
-          for m in __import__('re').finditer(patt, code, 64)
         )
-      
-        any(c>-1 and
-            PCs.append( 
-              eval( Operations[I[c][0]].format(
-                Labels.get(I[c][1]) if I[c][0]>2 else
-                  eval('+-'[I[c][1][0]!='S']+'0b'+I[c][1][1:].translate({83:48,84:49})),
-                ) + ( I[c][0]<17 and ' or c+1' or '' )
-              )
-            )
-          for c in PCs)
-      
-        return ''.join(result)
-
-    return run(S)
+      for c in PCs)
+    
+    return ''.join(result)
 
 
 if __name__=='__main__':
