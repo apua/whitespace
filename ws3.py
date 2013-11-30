@@ -34,45 +34,45 @@ LLL
 '''):
 
   
-    global Stack, Heap, result, buff
+    global S, H, result, buff
 
     buff = [str(num)]
     result = []
-    Stack = []
-    Heap = {}
+    S = []
+    H = {}
     L = {}
     I = []
     PCs = [0]
     CPSR = []
     
     Operations = [
-      # stack manipulation
-      'Stack.append({})',
-      'Stack.append(Stack[-{}])',
-      'any(Stack.pop(-2) and 0 for t in range({}))',
-      'Stack.append(Stack[-1])',
-      'Stack.insert(-1,Stack.pop())',
-      'Stack.pop() and 0',
+      # S manipulation
+      'S.append({})',
+      'S.append(S[-{}])',
+      'any(S.pop(-2) and 0 for t in range({}))',
+      'S.append(S[-1])',
+      'S.insert(-1,S.pop())',
+      'S.pop() and 0',
       # arithmetic
-      'Stack.append(Stack.pop(-2)+Stack.pop())',
-      'Stack.append(Stack.pop(-2)-Stack.pop())',
-      'Stack.append(Stack.pop(-2)*Stack.pop())',
-      'Stack.append(Stack.pop(-2)//Stack.pop())',
-      'Stack.append(Stack.pop(-2)%Stack.pop())',
-      # heap
-      'Heap.__setitem__(Stack.pop(-2), Stack.pop())',
-      'Stack.append(Heap.__getitem__(Stack.pop()))',
+      'S.append(S.pop(-2)+S.pop())',
+      'S.append(S.pop(-2)-S.pop())',
+      'S.append(S.pop(-2)*S.pop())',
+      'S.append(S.pop(-2)//S.pop())',
+      'S.append(S.pop(-2)%S.pop())',
+      # H
+      'H.__setitem__(S.pop(-2), S.pop())',
+      'S.append(H.__getitem__(S.pop()))',
       # IO
-      'result.append(chr(Stack.pop()))',
-      'result.append(str(Stack.pop()))',
-      'Heap.__setitem__(Stack.pop(),ord(getchar()))',
-      'Heap.__setitem__(Stack.pop(),int(buff.pop(0)))',
+      'result.append(chr(S.pop()))',
+      'result.append(str(S.pop()))',
+      'H.__setitem__(S.pop(),ord(getchar()))',
+      'H.__setitem__(S.pop(),int(buff.pop(0)))',
       # flow
       0,
       'CPSR.append(c+1) or {}',
       '{}',
-      '{} if Stack.pop()==0 else c+1',
-      '{} if Stack.pop()<0 else c+1',
+      '{} if S.pop()==0 else c+1',
+      '{} if S.pop()<0 else c+1',
       'CPSR.pop()',
       '-1',
     ]
