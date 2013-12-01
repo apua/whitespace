@@ -1,32 +1,30 @@
-let ``ghost := year -> opacity``,
-SSSSL
-what we want is the inverse of ghost, write ``f := opactity -> year``
-TLTTSSSSLTTT
-get number N and put into stack
+Let ``ghost := year -> opacity``, what we want is the inverse of ghost, 
+SSSSLTLTTSSSSLTTT
+write ``f := opactity -> year``
 SSSTSSTTTSSSTSSSSLTSST
-let N := opacity - 10000
+Let N := opacity - 10000 . If N = 0, then the ghost is newborn; otherwise,
 SLSLTSSL
-if N = 0, then the ghost is newborn
+let F := [0,1,1,2,3,5,..] is a Fibnacci seq w/ index [0,1,2,3,4,...],
 SSSTLSLSSLSSSSSLSLSTTSTTSTSST
-otherwise, let F := [0,1,1,2,3,5,..] is a Fibnacci seq w/ index [0,1,2,3,4,...],
+we find that
 LSS TL
-we find that N + (F[1]+1) + (F[2]+1) +...+ (F[k]+1) = 1 if F[k+1] = f(N) 
+  N + (F[1]+1) + (F[2]+1) +...+ (F[k]+1) = 1 if F[k+1] = f(N) .
 SSSTL SLS TTT SLS SLS
-for example, if N = -25 and F[k+1] = f(N) = 13 (i.e, F[k] = 8),
+For example, if N = -25 and F[k+1] = f(N) = 13 (i.e, F[k] = 8),
 SSSSL TTT TSSS
-N + (F[1]+1) + (F[2]+1) +...+ (F[f(N)]) = -25 + (1+1) + (1+1) +..+ (8+1)
+  N + (F[1]+1) + (F[2]+1) +...+ (F[f(N)]) = -25 + (1+1) + (1+1) +..+ (8+1)
 SSSTL SLT TTS
 = -25 + 2 + 2 + 3 + 4 + 6 + 9 = 1 
 SSSSL SLT TTS
-by this theorem, we can easily get f(N) as generating Fibnacci seq if f(N) in F
+By this theorem, we can easily get f(N) as generating Fibnacci seq if f(N) in F
 TSSS TSSS
-on the other hand, if f(N) is not in F, it means, 
+On the other hand, if f(N) is not in F, it means, there is f(M) in F such that
 SLS LTT TL
-there is f(M) in F such that f(N)-f(M) = N-M
+  f(N)-f(M) = N-M
 SSSTL TTT TSSS
-for example, len N := -22, M := -25
+For example, let N := -22 and M := -25, then 
 LSS SL
-f(N)-f(M) = 16-13 = 3 = (-22)-(-25) = N-M
+  f(N)-f(M) = 16-13 = 3 = (-22)-(-25) = N-M
 TLST
 so, we can use the simple idea, implement function f with a while loop
 LLL
