@@ -1,7 +1,7 @@
 # initial
 SSSSL TLTT # {0: f(n)}
-SSSSL # add 0
-SSSSL TTT # [0,f(n)]
+SSSSL TTT # [f(n)]
+SSSTSSTTTSSSTSSSSL # [f(n),10000]
 TSST # [K]
 
 # if K==0: return
