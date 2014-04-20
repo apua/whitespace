@@ -1,4 +1,11 @@
-::
+====================
+Whitespace Reference
+====================
+
+Tutorial: http://compsoc.dur.ac.uk/whitespace/tutorial.php
+
+
+Example of printing 1~10 ::
 
   S   S   STL             Put a 1 on the stack
   L   SS  STSSSSTTL       Set a Label at this point
@@ -17,7 +24,9 @@
   S   LL                  Discard our accumulator, to be tidy
   L   LL                  Finish
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note
+====
 
 ======= == =====================
 S stack manipulation
@@ -27,7 +36,7 @@ S stack manipulation
     TS  n   copy nth item
     LT      swap top 2 items
     LL      drop 1st item
-    TL  n   drop 2nd~n+1th items
+    TL  n   drop last 2nd~n+1th items
 ======= == =====================
 
 ======= == =====================
@@ -67,5 +76,3 @@ TL IO
     TS      &c
     TT      &d
 ======= == =====================
-
-

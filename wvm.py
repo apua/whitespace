@@ -20,30 +20,30 @@ def run_wvm(whitespace_code, lexical_token='STL'):
         source, token,
         clean = lambda source,token: ''.join(filter(token.__contains__,source)).translate(str.maketrans(token,'STL')) ,
         to_num = lambda s: eval('+-'[s[0]!='S']+'0b'+s[1:].translate({83:48,84:49})) ,
-        T = ((r'LSS([ST]+)L',     None                                          ),
-             (r'LST([ST]+)L',     'CPSR.append(c+1) or {}'                      ),
-             (r'LSL([ST]+)L',     '{}'                                          ),
-             (r'LTS([ST]+)L',     '{} if Stack.pop()==0 else c+1'               ),
-             (r'LTT([ST]+)L',     '{} if Stack.pop()<0 else c+1'                ),
-             (r'SS([ST][ST]+)L',  'Stack.append({})'                            ),
-             (r'STS([ST][ST]+)L', 'Stack.append(Stack[-{}])'                    ),
-             (r'STL([ST][ST]+)L', 'any(Stack.pop(-2) and 0 for t in range({}))' ),
-             (r'SLS()',           'Stack.append(Stack[-1])'                     ),
-             (r'SLT()',           'Stack.insert(-1,Stack.pop())'                ),
-             (r'SLL()',           'Stack.pop() and 0'                           ),
-             (r'TSSS()',          'Stack.append(Stack.pop(-2)+Stack.pop())'     ),
-             (r'TSST()',          'Stack.append(Stack.pop(-2)-Stack.pop())'     ),
-             (r'TSSL()',          'Stack.append(Stack.pop(-2)*Stack.pop())'     ),
-             (r'TSTS()',          'Stack.append(Stack.pop(-2)//Stack.pop())'    ),
-             (r'TSTT()',          'Stack.append(Stack.pop(-2)%Stack.pop())'     ),
-             (r'TTS()',           'Heap.__setitem__(Stack.pop(-2), Stack.pop())'),
-             (r'TTT()',           'Stack.append(Heap.__getitem__(Stack.pop()))' ),
-             (r'TLSS()',          'putchar(chr(Stack.pop()))'                   ),
-             (r'TLST()',          'putchar(str(Stack.pop()))'                   ),
-             (r'TLTS()',          'Heap.__setitem__(Stack.pop(),ord(getchar()))'),
-             (r'TLTT()',          'Heap.__setitem__(Stack.pop(),int(input()))'  ),
-             (r'LTL()',           'CPSR.pop()'                                  ),
-             (r'LLL()',           '-1'                                          ))
+        T = ((r'SS([ST][ST]+)L',  'stack.append({}) or PC.append(PC.pop()+1)'                                ),
+             (r'STS([ST][ST]+)L', 'stack.append(stack[-{}]) or PC.append(PC.pop()+1)'                        ),
+             (r'STL([ST][ST]+)L', 'stack.__delslice__(len(stack)-1+{},len(stack)-1) or PC.append(PC.pop()+1)'),
+             (r'SLS()',           'stack.append(stack[-1]) or PC.append(PC.pop()+1)'                         ),
+             (r'SLT()',           'stack.insert(-1,stack.pop()) or PC.append(PC.pop()+1)'                    ),
+             (r'SLL()',           'stack.pop() and False or PC.append(PC.pop()+1)'                           ),
+             (r'TSSS()',          'stack.append(stack.pop(-2)+stack.pop()) or PC.append(PC.pop()+1)'         ),
+             (r'TSST()',          'stack.append(stack.pop(-2)-stack.pop()) or PC.append(PC.pop()+1)'         ),
+             (r'TSSL()',          'stack.append(stack.pop(-2)*stack.pop()) or PC.append(PC.pop()+1)'         ),
+             (r'TSTS()',          'stack.append(stack.pop(-2)//stack.pop()) or PC.append(PC.pop()+1)'        ),
+             (r'TSTT()',          'stack.append(stack.pop(-2)%stack.pop()) or PC.append(PC.pop()+1)'         ),
+             (r'TTS()',           'heap.__setitem__(stack.pop(-2), stack.pop()) or PC.append(PC.pop()+1)'    ),
+             (r'TTT()',           'stack.append(heap.__getitem__(stack.pop())) or PC.append(PC.pop()+1)'     ),
+             (r'TLSS()',          'putchar(chr(stack.pop())) or PC.append(PC.pop()+1)'                       ),
+             (r'TLST()',          'putchar(str(stack.pop())) or PC.append(PC.pop()+1)'                       ),
+             (r'TLTS()',          'heap.__setitem__(stack.pop(),ord(getchar())) or PC.append(PC.pop()+1)'    ),
+             (r'TLTT()',          'heap.__setitem__(stack.pop(),int(input())) or PC.append(PC.pop()+1)'      ),
+             (r'LSS([ST]+)L',     None                                                                       ),
+             (r'LST([ST]+)L',     'PC.append(LR.append(PC.pop()+1) or {})'                                   ),
+             (r'LSL([ST]+)L',     'PC.__setitem__(0, {})'                                                    ),
+             (r'LTS([ST]+)L',     'PC.__setitem__(0, {} if stack.pop()==0 else PC[0]+1)'                     ),
+             (r'LTT([ST]+)L',     'PC.__setitem__(0, {} if stack.pop()<0 else PC[0]+1)'                      ),
+             (r'LTL()',           'PC.__setitem__(0, LR.pop())'                                              ),
+             (r'LLL()',           'PC.__setitem__(0, None)'                                                  ))
         ):
         '''
         clean: translate source code to [STL]+
@@ -63,25 +63,25 @@ def run_wvm(whitespace_code, lexical_token='STL'):
         for match in re.finditer(R,W,re.VERBOSE):
             for k, v in enumerate(match.groups()):
                 if v is not None:
-                    if k==0:
+                    if k==17:
                         L[v] = len(IR)
                     else:
-                        IR.append((T[k][1], to_num(v) if v and k>=5 else v))
+                        IR.append((k,v))
                     break
 
-        # 根據 label mapping 再修正 (於是 label mapping 就不需要了)
-        IR = [(ir[0],L[ir[1]]) if ir[1] in L else ir for ir in IR]
+        # 換算 label 和 number
+        # value: (trans to num) if k<3 else (get from label)
+        IR = [ T[k][1].format(to_num(v) if k<3 else L.get(v)) for k,v in IR ]
 
         return IR
 
 
-    def interprete_IR(IR, Components={'Stack':[],'Heap':{},'LR':[],'PC':[0]}):
+    def interprete_IR(text, stack=[], heap={}, LR=[], PC=[0]):
         '''
-        Components:
-            Stack: accumulator
-            Heap: memory
-            LR: link register which is also a stack
-            PC: program counter with length 1
+        Stack: accumulator
+        Heap: memory
+        LR: link register which is also a stack
+        PC: program counter with length 1
         '''
 
         def putchar(c):
@@ -95,12 +95,20 @@ def run_wvm(whitespace_code, lexical_token='STL'):
             from sys import stdin as i
             return i.read(1)
 
+        while PC[0] is not None:
+            instruction = text[PC[0]]
+            eval(instruction) # do something, then PC+=1 or jump
+
+            #tmp=input( 'PC/LR: {},{} stack: {}, heap: {}'.format(PC,LR,stack,heap) )
+
 
     IR = compile_to_IR(whitespace_code, lexical_token)
 
     # output test
-    from pprint import pprint as p
-    p(list(enumerate(IR)))
+    #from pprint import pprint as p
+    #p(list(enumerate(IR)))
+
+    interprete_IR(IR)
 
 
 if __name__=='__main__':
