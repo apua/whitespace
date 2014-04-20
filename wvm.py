@@ -5,94 +5,108 @@ usage:
     $ py3 wvm.py $FILE [ $LEXICAL_TOKEN ]
 
 doctest::
->>> code = """
-... SSSTL
-... LSSSTSS SSTTL
-... SLS
-... TLST
-... SSSTSTSL
-... TLSS
-... SSSTL
-... TSSS
-... SLS
-... SSSTSTTL
-... TSST
-... LTSSTSS STSTL
-... LSLSTS SSSTTL
-... LSSSTS SSTSTL
-... SLL
-... LLL
-... """
+>>> # output 1~10
+>>> code = "SSSTLLSSSTSS SSTTLSLSTLSTSSSTSTSLTLSSSSSTLTSSSSLSSSSTSTTLTSSTLTSSTSS STSTLLSLSTS SSSTTLLSSSTS SSTSTLSLLLLL"
+>>> # factorial
+>>> code = "SSSSLSSSTSSSTSTLTTSSSSTLSSSTTSTTTSLTTSSSSTSLSSSTTTSTSSLTTSSSSTTLSSSTTSSTSTLTTSSSSTSSLSSSTTTSSTSLTTSSSSTSTLSSSTSSSSSLTTSSSSTTSLSSSTTSSSSTLTTSSSSTTTLSSSTSSSSSLTTSSSSTSSSLSSSTTSTTTSLTTSSSSTSSTLSSSTTTSTSTLTTSSSSTSTSLSSSTTSTTSTLTTSSSSTSTTLSSSTTSSSTSLTTSSSSTTSSLSSSTTSSTSTLTTSSSSTTSTLSSSTTTSSTSLTTSSSSTTTSLSSSTTTSTSLTTSSSSTTTTLSSSTSSSSSLTTSSSSTSSSSLSSSSLTTSSSSTSTSSLSSSTSSSSTLTTSSSSTSTSTLSSSTSSSSSLTTSSSSTSTTSLSSSTTTTSTLTTSSSSTSTTTLSSSTSSSSSLTTSSSSTTSSSLSSSSLTTSSSSSLLSTSTTTSTTTSTTTSSTSSTTSTSSTSTTTSTSSSTTSSTSTLSSSTTSSTSSLTLTTSSSTTSSTSSLTTTLSTSTTSSTTSSTTSSSSTSTTSSSTTSTTTSTSSLSSSTTSSTSSLTTTTLSTSSSTSTSSLLSTSTTTSTTTSTTTSSTSSTTSTSSTSTTTSTSSSTTSSTSTLTLSTLSTSTTSTTTSSTTSSTSTSTTTSTTTSTTSTTSSSTTSTSSTSTTSTTTSSTTSSTSTLLLLLSSSTTSSTTSSTTSSSSTSTTSSSTTSTTTSTSSLSLSSSSTLTSSTLTSSTTSSTTSSTTSSSSTSTTSSSTTSTTTSTSSSTTSSSTSSTTSSSSTSTTTSSTTSTTSSTSTLSLSSSSTLTSSTLSTSTTSSTTSSTTSSSSTSTTSSSTTSTTTSTSSLTSSLLTLLSSSTTSSTTSSTTSSSSTSTTSSSTTSTTTSTSSSTTSSSTSSTTSSSSTSTTTSSTTSTTSSTSTLSSSTLSLLLTLLSSSTTSSSSTSTTSSTSSSTTSSTSSLTSSSLTLLSSSTTTSTTTSTTTSSTSSTTSTSSTSTTTSTSSSTTSSTSTLSLSTTTSLSLTSSTTTSTTTSTTTSSTSSTTSTSSTSTTTSTSSSTTSSTSTSTSTTTTTSTTSSTSTSTTSTTTSSTTSSTSSLTLSSSSSTLTSSSLSLSTTTSTTTSTTTSSTSSTTSTSSTSTTTSTSSSTTSSTSTLLSSSTTTSTTTSTTTSSTSSTTSTSSTSTTTSTSSSTTSSTSTSTSTTTTTSTTSSTSTSTTSTTTSSTTSSTSSLSLLSLLLTLLSSSTTTSSTSSTTSSTSTSTTSSSSTSTTSSTSSLSLSSLSTLTSTTTSLSSSSTSTSLTSSTLTSSTTTSSTSSTTSSTSTSTTSSSSTSTTSSTSSSTSTTTTTSTTSSTSTSTTSTTTSSTTSSTSSLSLLSSSTLTSSSLSLSTTTSSTSSTTSSTSTSTTSSSSTSTTSSTSSLLSSSTTTSSTSSTTSSTSTSTTSSSSTSTTSSTSSSTSTTTTTSTTSSTSTSTTSTTTSSTTSSTSSLSLLSSSTLTSSSSSSSLTTSLTLLSSSTTSTTTSSTTSSTSTSTTTSTTTSTTSTTSSSTTSTSSTSTTSTTTSSTTSSTSTLSSSTSTSLSSSTTSTLTLSSTLSSLTLL"
+>>> 
 >>> run_wvm(code)
 '''
 
 def run_wvm(whitespace_code, lexical_token='STL'):
     '''compile Whitespace code and run VM'''
 
-    import re
+    # 定義一些小工具, 未來可合併掉
+    def putchar(c):
+        '''output a given charactor'''
+        from sys import stdout as o
+        o.write(c)
+        o.flush()
+
+    def getchar():
+        '''get a charactor from stdin'''
+        from sys import stdin as i
+        return i.read(1)
+    
+    def compile_to_IR(
+        source, token,
+        clean = lambda source,token: ''.join(filter(token.__contains__,source)).translate(str.maketrans(token,'STL')) ,
+        to_num = lambda s: eval('+-'[s[0]!='S']+'0b'+s[1:].translate({83:48,84:49})) ,
+        T = ((r'LSS([ST]+)L',     None                                          ),
+             (r'LST([ST]+)L',     'CPSR.append(c+1) or {}'                      ),
+             (r'LSL([ST]+)L',     '{}'                                          ),
+             (r'LTS([ST]+)L',     '{} if Stack.pop()==0 else c+1'               ),
+             (r'LTT([ST]+)L',     '{} if Stack.pop()<0 else c+1'                ),
+             (r'SS([ST][ST]+)L',  'Stack.append({})'                            ),
+             (r'STS([ST][ST]+)L', 'Stack.append(Stack[-{}])'                    ),
+             (r'STL([ST][ST]+)L', 'any(Stack.pop(-2) and 0 for t in range({}))' ),
+             (r'SLS()',           'Stack.append(Stack[-1])'                     ),
+             (r'SLT()',           'Stack.insert(-1,Stack.pop())'                ),
+             (r'SLL()',           'Stack.pop() and 0'                           ),
+             (r'TSSS()',          'Stack.append(Stack.pop(-2)+Stack.pop())'     ),
+             (r'TSST()',          'Stack.append(Stack.pop(-2)-Stack.pop())'     ),
+             (r'TSSL()',          'Stack.append(Stack.pop(-2)*Stack.pop())'     ),
+             (r'TSTS()',          'Stack.append(Stack.pop(-2)//Stack.pop())'    ),
+             (r'TSTT()',          'Stack.append(Stack.pop(-2)%Stack.pop())'     ),
+             (r'TTS()',           'Heap.__setitem__(Stack.pop(-2), Stack.pop())'),
+             (r'TTT()',           'Stack.append(Heap.__getitem__(Stack.pop()))' ),
+             (r'TLSS()',          'putchar(chr(Stack.pop()))'                   ),
+             (r'TLST()',          'putchar(str(Stack.pop()))'                   ),
+             (r'TLTS()',          'Heap.__setitem__(Stack.pop(),ord(getchar()))'),
+             (r'TLTT()',          'Heap.__setitem__(Stack.pop(),int(input()))'  ),
+             (r'LTL()',           'CPSR.pop()'                                  ),
+             (r'LLL()',           '-1'                                          ))
+        ):
+        '''
+        clean: translate source code to [STL]+
+        to_num: translate [ST][ST]+ to number
+        T: intermediate language translation mapping table
+           columns: [pattern, translate map]
+        '''
+
+        # 清程式碼
+        W = clean(source,token)
+
+        # 建 IR 和 label mapping
+        import re
+        IR = intermediate_representation = []
+        R = pattern = '|'.join(t[0] for t in T)
+        L = temporary_label_mapping = {}
+        for match in re.finditer(R,W,re.VERBOSE):
+            for k, v in enumerate(match.groups()):
+                if v is not None:
+                    if k==0:
+                        L[v] = len(IR)
+                    else:
+                        IR.append((T[k][1], to_num(v) if v and k>=5 else v))
+                    break
+
+        # 根據 label mapping 再修正 (於是 label mapping 就不需要了)
+        IR = [(ir[0],L[ir[1]]) if ir[1] in L else ir for ir in IR]
+
+        return IR
+
+    IR = compile_to_IR(whitespace_code, lexical_token)
+
+
+
+    # output test
     from pprint import pprint as p
-
-    def clean(code, token=lexical_token):
-        return ''.join(c for c in code if c in token)#.translate()
-
-    W = clean(whitespace_code)
-
-    # 根據 instruction set 定義 pattern
-    T = instruction_translate= (
-        {'pattern': r'SS([ST][ST]+)L',  'IR': 'Stack.append({})'},
-        {'pattern': r'STS([ST][ST]+)L', 'IR': 'Stack.append(Stack[-{}])'                    },
-        {'pattern': r'STL([ST][ST]+)L', 'IR': 'any(Stack.pop(-2) and 0 for t in range({}))' },
-        {'pattern': r'SLS()',           'IR': 'Stack.append(Stack[-1])'                     },
-        {'pattern': r'SLT()',           'IR': 'Stack.insert(-1,Stack.pop())'                },
-        {'pattern': r'SLL()',           'IR': 'Stack.pop() and 0'                           },
-        {'pattern': r'TSSS()',          'IR': 'Stack.append(Stack.pop(-2)+Stack.pop())'     },
-        {'pattern': r'TSST()',          'IR': 'Stack.append(Stack.pop(-2)-Stack.pop())'     },
-        {'pattern': r'TSSL()',          'IR': 'Stack.append(Stack.pop(-2)*Stack.pop())'     },
-        {'pattern': r'TSTS()',          'IR': 'Stack.append(Stack.pop(-2)//Stack.pop())'    },
-        {'pattern': r'TSTT()',          'IR': 'Stack.append(Stack.pop(-2)%Stack.pop())'     },
-        {'pattern': r'TTS()',           'IR': 'Heap.__setitem__(Stack.pop(-2), Stack.pop())'},
-        {'pattern': r'TTT()',           'IR': 'Stack.append(Heap.__getitem__(Stack.pop()))' },
-        {'pattern': r'TLSS()',          'IR': 'putchar(chr(Stack.pop()))'                   },
-        {'pattern': r'TLST()',          'IR': 'putchar(str(Stack.pop()))'                   },
-        {'pattern': r'TLTS()',          'IR': 'Heap.__setitem__(Stack.pop(),ord(getchar()))'},
-        {'pattern': r'TLTT()',          'IR': 'Heap.__setitem__(Stack.pop(),int(input()))'  },
-        {'pattern': r'LSS([ST]+)L',     'IR': '# set label'                                 },
-        {'pattern': r'LST([ST]+)L',     'IR': 'CPSR.append(c+1) or {}'                      },
-        {'pattern': r'LSL([ST]+)L',     'IR': '{}'                                          },
-        {'pattern': r'LTS([ST]+)L',     'IR': '{} if Stack.pop()==0 else c+1'               },
-        {'pattern': r'LTT([ST]+)L',     'IR': '{} if Stack.pop()<0 else c+1'                },
-        {'pattern': r'LTL()',           'IR': 'CPSR.pop()'                                  },
-        {'pattern': r'LLL()',           'IR': '-1'                                          },
-        )
-
-    # 這段會把轉譯的 IR 建立出來, 並設定 label
-    I = intermediate_representation = []
-    R = pattern = '|'.join(t['pattern'] for t in T)
-    L = temporary_label_mapping = {}
-    for match in re.finditer(R,W,re.VERBOSE):
-        for k, v in enumerate(match.groups()):
-            if v is not None:
-                if T[k]['IR']=='# set label':
-                    L[v] = len(I)
-                else:
-                    I.append((T[k]['IR'], v))
-                break
-    p(L)
-    p(list(enumerate(I)))
-                
-    S = stack = []
-    H = heap = {}
-    P = program_counter = 0
-    run = lambda :None
+    p(list(enumerate(IR)))
 
 
-def get_argvs():
-    import sys
-    argvs = {'whitespace_code': open(sys.argv[1]).read() ,
-             'lexical_token': ' \t\n' if len(sys.argv[1])<3 else sys.argv[2]}
-    return argvs
+
+    def interprete_IR(IR, Components={'Stack':[],'Heap':{},'LR':[],'PC':[0]}):
+        '''
+        Components:
+            Stack: accumulator
+            Heap: memory
+            LR: link register which is also a stack
+            PC: program counter with length 1
+        '''
 
 
 if __name__=='__main__':
-    import doctest
-    run_wvm(**get_argvs())
+    import sys
+    run_wvm(whitespace_code=open(sys.argv[1]).read(),
+            lexical_token=' \t\n' if len(sys.argv)<3 else sys.argv[2])
