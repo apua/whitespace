@@ -18,7 +18,7 @@ def run_wvm(whitespace_code, lexical_token='STL'):
                     else:
                         IR.append((k,v))
                     break
-        return [ 'lambda S,H,LR,PC,putchar=lambda c,o=__import__(\'sys\').stdout: o.write(c) and o.flush(), getchar=lambda i=__import__(\'sys\').stdin: i.read(1):'+\
+        return [ 'lambda S,H,LR,PC,putchar=lambda c,o=__import__("sys").stdout: o.write(c) and o.flush(), getchar=lambda i=__import__("sys").stdin: i.read(1):'+\
                  T[k].format(eval('+-'[v[0]!='S']+'0b'+v[1:].translate({83:48,84:49})) if k<3 else L.get(v)).replace('^','PC.__setitem__')+(' or PC.append(PC.pop()+1)' if k<17 else '') for k,v in IR ]             
 
 
