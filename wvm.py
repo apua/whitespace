@@ -16,18 +16,6 @@ doctest::
 def run_wvm(whitespace_code, lexical_token='STL'):
     '''compile Whitespace code and run VM'''
 
-    # 定義一些小工具, 未來可合併掉
-    def putchar(c):
-        '''output a given charactor'''
-        from sys import stdout as o
-        o.write(c)
-        o.flush()
-
-    def getchar():
-        '''get a charactor from stdin'''
-        from sys import stdin as i
-        return i.read(1)
-    
     def compile_to_IR(
         source, token,
         clean = lambda source,token: ''.join(filter(token.__contains__,source)).translate(str.maketrans(token,'STL')) ,
@@ -86,15 +74,6 @@ def run_wvm(whitespace_code, lexical_token='STL'):
 
         return IR
 
-    IR = compile_to_IR(whitespace_code, lexical_token)
-
-
-
-    # output test
-    from pprint import pprint as p
-    p(list(enumerate(IR)))
-
-
 
     def interprete_IR(IR, Components={'Stack':[],'Heap':{},'LR':[],'PC':[0]}):
         '''
@@ -104,6 +83,24 @@ def run_wvm(whitespace_code, lexical_token='STL'):
             LR: link register which is also a stack
             PC: program counter with length 1
         '''
+
+        def putchar(c):
+            '''output a given charactor'''
+            from sys import stdout as o
+            o.write(c)
+            o.flush()
+
+        def getchar():
+            '''get a charactor from stdin'''
+            from sys import stdin as i
+            return i.read(1)
+
+
+    IR = compile_to_IR(whitespace_code, lexical_token)
+
+    # output test
+    from pprint import pprint as p
+    p(list(enumerate(IR)))
 
 
 if __name__=='__main__':
