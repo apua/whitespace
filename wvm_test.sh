@@ -1,5 +1,10 @@
-py3 wvm.py STL/factorial.stl STL
-py3 wvm.py STL/factorial.stl STL
-py3 wvm.py STL/fibnancy.stl STL
-py3 wvm.py STL/hello_user.stl STL
-py3 wvm.py STL/hello_world.stl STL
+if [ $# -lt 1 ]; then
+    echo "usage: sh $0 wvm.py"
+    exit
+fi
+
+py3 $1 STL/factorial.stl STL
+py3 $1 STL/factorial.stl STL
+py3 $1 STL/fibnancy.stl STL
+py3 $1 STL/hello_user.stl STL
+py3 $1 STL/hello_world.stl STL

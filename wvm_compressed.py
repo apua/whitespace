@@ -22,8 +22,8 @@ def run_wvm(whitespace_code, lexical_token='STL'):
                  T[k].format(eval('+-'[v[0]!='S']+'0b'+v[1:].translate({83:48,84:49})) if k<3 else L.get(v)).replace('^','PC.__setitem__')+(' or PC.append(PC.pop()+1)' if k<17 else '') for k,v in IR ]             
 
 
-    def interprete_IR(text, component=([],{},[],[0])):
-        any(1 if component[3][0]<0 else eval(text[component[3][0]])(*component) for i in __import__('itertools').cycle([0]))
+    def interprete_IR(text, components=([],{},[],[0])):
+        any(1 if components[3][0]<0 else eval(text[components[3][0]])(*components) for i in __import__('itertools').cycle([0]))
 
 
     interprete_IR(compile_to_IR(whitespace_code, lexical_token))
