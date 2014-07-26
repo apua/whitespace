@@ -2,6 +2,8 @@
 Whitespace Interpreter
 ======================
 
+::
+
         # S:=space, T:=tab, L:=Line Feed
         S (?: S ([ST][ST]+)L            |   # push n
               TS([ST][ST]+)L            |   # copy n-th item
