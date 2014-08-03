@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Whitespace by apua</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Whitespace</h1>
+        <p class="header">implementation of whitespace interpreter</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/apua/whitespace/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/apua/whitespace/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/apua/whitespace">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/apua">apua</a></p>
+
+
+      </header>
+      <section>
+        <h1></h1>
+
+<h1>
+<a name="whitespace-interpreter" class="anchor" href="#whitespace-interpreter"><span class="octicon octicon-link"></span></a>Whitespace Interpreter</h1>
+
+<p>::</p>
+
+<pre><code>    # S:=space, T:=tab, L:=Line Feed
+    S (?: S ([ST][ST]+)L            |   # push n
+          TS([ST][ST]+)L            |   # copy n-th item
+          TL([ST][ST]+)L            |   # slide n items
+          LS()                      |   # dup
+          LT()                      |   # swap
+          LL()                      )|  # drop
+    TS(?: SS()|ST()|SL()|TS()|TT()  )|  # + - * // %
+    TT(?: S ()|T ()                 )|  # store retrieve
+    TL(?: SS()|ST()|TS()|TT() )|        # putchar putnum getchar getnum
+    L (?: SS([ST]+)L                |   # set label
+          ST([ST]+)L                |   # call subroutine
+          SL([ST]+)L                |   # jump to label
+          TS([ST]+)L                |   # jump to label if push ==0
+          TT([ST]+)L                |   # jump to label if push &lt; 0
+          TL()                      |   # end subroutine
+          LL()                      )   # end program
+</code></pre>
+
+<p>.. This page is written in reStructuredText but parsing with Markdown (GitHub ver.)</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
